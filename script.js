@@ -15,21 +15,22 @@ function onMarkerClick(e) {
             for (var i = 1; i < rows.length; i++) {
                 var columns = rows[i].split(',');
                 if (columns.length >= columnIndex) {
-                    columnData += columns[columnIndex-1] + '<br>'; // Extract item from the specified column
+                    columnData += columns[columnIndex - 1] + '<br>'; // Extract item from the specified column
                 }
             }
             // Display the list of items in the 'event-list' div
             var content = '<h2>' + markerTitle + '</h2><p>' + columnData + '</p>';
             content += '<button onclick="closeEventList()">Close</button>'; // Add close button
             document.getElementById('event-list').innerHTML = content;
+            document.getElementById('event-list').classList.add('open');
         });
 }
 
 // Function to close the event list segment
 function closeEventList() {
     document.getElementById('event-list').innerHTML = ''; // Clear the content
+    document.getElementById('event-list').classList.remove('open'); // Remove the 'open' class
 }
-
 // Create the map object
 var map = L.map('map', {
     maxZoom: 18, // Set maximum zoom level to 18
