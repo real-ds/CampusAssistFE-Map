@@ -1,3 +1,35 @@
+// script.js
+
+// Function to handle marker click events
+// Function to handle marker click events
+function onMarkerClick(e) {
+    var markerTitle = e.target.getPopup().getContent(); // Get marker title
+    var columnIndex = e.target.options.column; // Get associated column index
+    fetch('mapsheet1.csv') // Replace 'your_data.csv' with the path to your CSV file
+        .then(response => response.text()) // Get response as text
+        .then(data => {
+            // Parse the CSV data
+            var rows = data.split('\n');
+            var columnData = '';
+            // Extract the items from the desired column
+            for (var i = 1; i < rows.length; i++) {
+                var columns = rows[i].split(',');
+                if (columns.length >= columnIndex) {
+                    columnData += columns[columnIndex-1] + '<br>'; // Extract item from the specified column
+                }
+            }
+            // Display the list of items in the 'event-list' div
+            var content = '<h2>' + markerTitle + '</h2><p>' + columnData + '</p>';
+            content += '<button onclick="closeEventList()">Close</button>'; // Add close button
+            document.getElementById('event-list').innerHTML = content;
+        });
+}
+
+// Function to close the event list segment
+function closeEventList() {
+    document.getElementById('event-list').innerHTML = ''; // Clear the content
+}
+
 // Create the map object
 var map = L.map('map', {
     maxZoom: 18, // Set maximum zoom level to 18
@@ -10,30 +42,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// Function to handle marker click events
-function onMarkerClick(e) {
-    var markerTitle = e.target.getPopup().getContent(); // Get marker title
-    fetch('mapsheet.csv') // Fetch CSV file
-        .then(response => response.text()) // Get response as text
-        .then(data => {
-            var lines = data.split('\n');
-            var eventData = '';
-            for (var i = 0; i < lines.length; i++) {
-                var parts = lines[i].split(',');
-                if (parts[0] === markerTitle) {
-                    for (var j = 1; j < parts.length; j++) {
-                        eventData += parts[j] + '<br>'; // Concatenate event data vertically downwards
-                    }
-                }
-            }
-            if (eventData) {
-                // Display event data in the event list
-                var eventList = document.getElementById('event-list');
-                eventList.innerHTML = '<h2>' + markerTitle + '</h2>' + '<p>' + eventData + '</p>';
-            }
-        });
-}
-
 // Add custom markers with popups
 var customIcon = L.icon({
     iconUrl: 'marker2.png',
@@ -43,9 +51,13 @@ var customIcon = L.icon({
 });
 
 var markers = [
-    L.marker([12.843995, 80.153438], {icon: customIcon}).bindPopup("AB1"),
-    L.marker([12.842947, 80.156505], {icon: customIcon}).bindPopup("AB2"),
-    L.marker([12.839659, 80.155106], {icon: customIcon}).bindPopup("MG Auditorium")
+    L.marker([12.843995, 80.153438], {icon: customIcon, column: 1}).bindPopup("AB1"),
+    L.marker([12.842947, 80.156505], {icon: customIcon, column: 2}).bindPopup("AB2"),
+    L.marker([12.839659, 80.155106], {icon: customIcon, column: 4}).bindPopup("MG Auditorium"),
+    L.marker([12.841641, 80.153817], {icon: customIcon, column: 6}).bindPopup("MBA Amphitheatre"),
+    L.marker([12.841489, 80.154588], {icon: customIcon, column: 5}).bindPopup("Clock Tower"),
+    L.marker([12.843622, 80.154640], {icon: customIcon, column: 3}).bindPopup("AB3"),
+    
 ];
 
 // Add click event listeners to markers
